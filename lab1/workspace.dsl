@@ -1,0 +1,167 @@
+workspace {
+    name "Бюджетирование"
+
+    !identifiers hierarchical
+
+    model {
+        properties { 
+            structurizr.groupSeparator "/"
+        }
+
+        user = person "Пользователь" {
+            description "Управляет своим бюджетом"
+            tags "user"
+        }
+
+        budgeting_system = softwareSystem "Система Бюджетирования" {
+            description "Позволяет управлять доходами и расходами"
+            tags "system"
+
+            user_service = container "User Service" {
+                description "Управляет пользователями"
+                technology "Python/Litestar"
+                tags "service"
+            } 
+
+            budget_service = container "Budget Service" {
+                description "Управляет доходами и расходами"
+                technology "Python/Litestar"
+                tags "service"
+            } 
+
+            database = container "Database" {
+                description "Хранит данные пользователей, доходов и расходов"
+                technology "PostgreSQL"
+                tags "database"
+            }
+
+            report_service = container "Report Service" {
+                description "Генерирует отчеты"
+                technology "Python/Litestar"
+                tags "service"
+            }
+
+            user -> user_service "Регистрация и вход"
+            user_service -> database "Сохранение и получение данных"
+            user_service -> user "Возвращает токен авторизации"
+            user -> budget_service "Управление бюджетом"
+            budget_service -> database "Сохранение и получение бюджета"
+            budget_service -> user "Возвращает актуальный баланс"
+
+            user -> budget_service "Запрос на создание отчета"
+            budget_service -> report_service "Запрос на создание отчета"
+            report_service -> database "Извлечение данных для отчета"
+            report_service -> budget_service "Отчет готов"
+            budget_service -> user "Сообщение о готовности отчета"
+        }
+
+        user -> budgeting_system "Использует систему для управления бюджетом"
+    }
+
+    views {
+        themes default
+
+        properties {
+            structurizr.tooltips true
+        }
+
+        systemContext budgeting_system {
+            autoLayout
+            include *
+        }
+
+        container budgeting_system {
+            autoLayout
+            include *
+        }
+
+        dynamic budgeting_system "UC01" "Создание нового пользователя" {
+            autoLayout
+            user -> budgeting_system.user_service "Создание пользователя (POST /user)"
+            budgeting_system.user_service -> budgeting_system.database "Сохранение данных о пользователе"
+            budgeting_system.user_service -> user "Возвращает подтверждение регистрации"
+        }
+
+        dynamic budgeting_system "UC02" "Авторизация пользователя" {
+            autoLayout
+            user -> budgeting_system.user_service "Авторизация (POST /auth)"
+            budgeting_system.user_service -> budgeting_system.database "Проверка учетных данных"
+            budgeting_system.user_service -> user "Возвращает токен авторизации"
+        }
+
+        dynamic budgeting_system "UC03" "Создание планируемого дохода" {
+            autoLayout
+            user -> budgeting_system.user_service "Авторизация (POST /auth)"
+            budgeting_system.user_service -> user "Возвращает токен авторизации"
+            user -> budgeting_system.budget_service "Создание дохода (POST /income)"
+            budgeting_system.budget_service -> budgeting_system.database "Сохранение дохода"
+            budgeting_system.budget_service -> user "Возвращает подтверждение операции"
+        }
+
+        dynamic budgeting_system "UC04" "Создание планируемого расхода" {
+            autoLayout
+            user -> budgeting_system.user_service "Авторизация (POST /auth)"
+            budgeting_system.user_service -> user "Возвращает токен авторизации"
+            user -> budgeting_system.budget_service "Создание расхода (POST /expense)"
+            budgeting_system.budget_service -> budgeting_system.database "Сохранение расхода"
+            budgeting_system.budget_service -> user "Возвращает подтверждение операции"
+        }
+
+        dynamic budgeting_system "UC06" "Получение перечня планируемых доходов" {
+            autoLayout
+            user -> budgeting_system.user_service "Авторизация (POST /auth)"
+            budgeting_system.user_service -> user "Возвращает токен авторизации"
+            user -> budgeting_system.budget_service "Запрос списка доходов (GET /income)"
+            budgeting_system.budget_service -> budgeting_system.database "Извлечение данных о доходах"
+            budgeting_system.budget_service -> user "Передача списка доходов"
+        }
+
+        dynamic budgeting_system "UC07" "Получение перечня планируемых расходов" {
+            autoLayout
+            user -> budgeting_system.user_service "Авторизация (POST /auth)"
+            budgeting_system.user_service -> user "Возвращает токен авторизации"
+            user -> budgeting_system.budget_service "Запрос списка расходов (GET /expense)"
+            budgeting_system.budget_service -> budgeting_system.database "Извлечение данных о расходах"
+            budgeting_system.budget_service -> user "Передача списка расходов"
+        }
+
+        dynamic budgeting_system "UC08" "Запрос на генерацию отчета о динамике бюджета за период" {
+            autoLayout
+            user -> budgeting_system.budget_service "Запрос на создание отчета (POST /report)"
+            budgeting_system.budget_service -> budgeting_system.report_service "Генерация отчета"
+            budgeting_system.report_service -> budgeting_system.database "Извлечение данных для отчета"
+            budgeting_system.budget_service -> user "Сообщение о начале генерации отчета"
+        }
+
+        dynamic budgeting_system "UC09" "Уведомление о готовности отчета" {
+            autoLayout
+            budgeting_system.budget_service -> user "Уведомление о готовности отчета"
+        }
+
+        styles {
+            element "database" {
+                shape cylinder
+                background #f4b183
+                color #000000
+            }
+            
+            element "service" {
+                shape roundedBox
+                background #8eaadb
+                color #000000
+            }
+            
+            element "system" {
+                shape box
+                background #d5a6bd
+                color #000000
+            }
+            
+            element "user" {
+                shape person
+                background #ffe599
+                color #000000
+            }
+        }
+    }
+}
