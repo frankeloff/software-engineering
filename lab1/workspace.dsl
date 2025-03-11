@@ -75,21 +75,21 @@ workspace {
             include *
         }
 
-        dynamic budgeting_system "UC01" "Создание нового пользователя" {
+        dynamic budgeting_system "Case1" "Создание нового пользователя" {
             autoLayout
             user -> budgeting_system.user_service "Создание пользователя (POST /user)"
             budgeting_system.user_service -> budgeting_system.database "Сохранение данных о пользователе"
             budgeting_system.user_service -> user "Возвращает подтверждение регистрации"
         }
 
-        dynamic budgeting_system "UC02" "Авторизация пользователя" {
+        dynamic budgeting_system "Case2" "Авторизация пользователя" {
             autoLayout
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> budgeting_system.database "Проверка учетных данных"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
         }
 
-        dynamic budgeting_system "UC03" "Создание планируемого дохода" {
+        dynamic budgeting_system "Case3" "Создание планируемого дохода" {
             autoLayout
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
@@ -98,7 +98,7 @@ workspace {
             budgeting_system.budget_service -> user "Возвращает подтверждение операции"
         }
 
-        dynamic budgeting_system "UC04" "Создание планируемого расхода" {
+        dynamic budgeting_system "Case4" "Создание планируемого расхода" {
             autoLayout
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
@@ -107,7 +107,7 @@ workspace {
             budgeting_system.budget_service -> user "Возвращает подтверждение операции"
         }
 
-        dynamic budgeting_system "UC06" "Получение перечня планируемых доходов" {
+        dynamic budgeting_system "Case5" "Получение перечня планируемых доходов" {
             autoLayout
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
@@ -116,7 +116,7 @@ workspace {
             budgeting_system.budget_service -> user "Передача списка доходов"
         }
 
-        dynamic budgeting_system "UC07" "Получение перечня планируемых расходов" {
+        dynamic budgeting_system "Case6" "Получение перечня планируемых расходов" {
             autoLayout
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
@@ -125,7 +125,7 @@ workspace {
             budgeting_system.budget_service -> user "Передача списка расходов"
         }
 
-        dynamic budgeting_system "UC08" "Запрос на генерацию отчета о динамике бюджета за период" {
+        dynamic budgeting_system "Case7" "Запрос на генерацию отчета о динамике бюджета за период" {
             autoLayout
             user -> budgeting_system.budget_service "Запрос на создание отчета (POST /report)"
             budgeting_system.budget_service -> budgeting_system.report_service "Генерация отчета"
@@ -133,7 +133,7 @@ workspace {
             budgeting_system.budget_service -> user "Сообщение о начале генерации отчета"
         }
 
-        dynamic budgeting_system "UC09" "Уведомление о готовности отчета" {
+        dynamic budgeting_system "Case8" "Уведомление о готовности отчета" {
             autoLayout
             budgeting_system.budget_service -> user "Уведомление о готовности отчета"
         }
