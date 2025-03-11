@@ -43,7 +43,7 @@ workspace {
 
             user -> user_service "Регистрация и вход"
             user_service -> database "Сохранение и получение данных"
-            user_service -> user "Возвращает токен авторизации"
+
             user -> budget_service "Управление бюджетом"
             budget_service -> database "Сохранение и получение бюджета"
             budget_service -> user "Возвращает актуальный баланс"
@@ -66,12 +66,12 @@ workspace {
         }
 
         systemContext budgeting_system {
-            autoLayout
+            autoLayout lr 1000 1000
             include *
         }
 
         container budgeting_system {
-            autoLayout
+            autoLayout tb 500 250
             include *
         }
 
@@ -90,7 +90,7 @@ workspace {
         }
 
         dynamic budgeting_system "Case3" "Создание планируемого дохода" {
-            autoLayout
+            autoLayout tb 1000 100
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Создание дохода (POST /income)"
@@ -99,7 +99,7 @@ workspace {
         }
 
         dynamic budgeting_system "Case4" "Создание планируемого расхода" {
-            autoLayout
+            autoLayout tb 1000 100
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Создание расхода (POST /expense)"
@@ -108,7 +108,7 @@ workspace {
         }
 
         dynamic budgeting_system "Case5" "Получение перечня планируемых доходов" {
-            autoLayout
+            autoLayout tb 1000 100
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Запрос списка доходов (GET /income)"
@@ -117,7 +117,7 @@ workspace {
         }
 
         dynamic budgeting_system "Case6" "Получение перечня планируемых расходов" {
-            autoLayout
+            autoLayout tb 1000 100
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Запрос списка расходов (GET /expense)"
