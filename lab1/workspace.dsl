@@ -35,6 +35,12 @@ workspace {
                 tags "database"
             }
 
+            redis = container "Redis" {
+                description "Хранит сессии пользователей"
+                technology "Redis"
+                tags "cache"
+            }
+
             report_service = container "Report Service" {
                 description "Генерирует отчеты"
                 technology "Python/Litestar"
@@ -43,8 +49,10 @@ workspace {
 
             user -> user_service "Регистрация и вход"
             user_service -> database "Сохранение и получение данных"
+            user_service -> redis "Сохранение сессии (JWT)"
 
             user -> budget_service "Управление бюджетом"
+            budget_service -> redis "Получение сессии"
             budget_service -> database "Сохранение и получение бюджета"
             budget_service -> user "Возвращает актуальный баланс"
 
@@ -86,6 +94,7 @@ workspace {
             autoLayout
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> budgeting_system.database "Проверка учетных данных"
+            budgeting_system.user_service -> budgeting_system.redis "Сохранение сессии"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
         }
 
@@ -94,6 +103,7 @@ workspace {
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Создание дохода (POST /income)"
+            budgeting_system.budget_service -> budgeting_system.redis "Проверка наличия сессии"
             budgeting_system.budget_service -> budgeting_system.database "Сохранение дохода"
             budgeting_system.budget_service -> user "Возвращает подтверждение операции"
         }
@@ -103,6 +113,7 @@ workspace {
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Создание расхода (POST /expense)"
+            budgeting_system.budget_service -> budgeting_system.redis "Проверка наличия сессии"
             budgeting_system.budget_service -> budgeting_system.database "Сохранение расхода"
             budgeting_system.budget_service -> user "Возвращает подтверждение операции"
         }
@@ -112,6 +123,7 @@ workspace {
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Запрос списка доходов (GET /income)"
+            budgeting_system.budget_service -> budgeting_system.redis "Проверка наличия сессии"
             budgeting_system.budget_service -> budgeting_system.database "Извлечение данных о доходах"
             budgeting_system.budget_service -> user "Передача списка доходов"
         }
@@ -121,6 +133,7 @@ workspace {
             user -> budgeting_system.user_service "Авторизация (POST /auth)"
             budgeting_system.user_service -> user "Возвращает токен авторизации"
             user -> budgeting_system.budget_service "Запрос списка расходов (GET /expense)"
+            budgeting_system.budget_service -> budgeting_system.redis "Проверка наличия сессии"
             budgeting_system.budget_service -> budgeting_system.database "Извлечение данных о расходах"
             budgeting_system.budget_service -> user "Передача списка расходов"
         }
@@ -128,6 +141,7 @@ workspace {
         dynamic budgeting_system "Case7" "Запрос на генерацию отчета о динамике бюджета за период" {
             autoLayout
             user -> budgeting_system.budget_service "Запрос на создание отчета (POST /report)"
+            budgeting_system.budget_service -> budgeting_system.redis "Проверка наличия сессии"
             budgeting_system.budget_service -> budgeting_system.report_service "Генерация отчета"
             budgeting_system.report_service -> budgeting_system.database "Извлечение данных для отчета"
             budgeting_system.budget_service -> user "Сообщение о начале генерации отчета"
