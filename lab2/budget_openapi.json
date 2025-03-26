@@ -200,6 +200,7 @@
                 "properties": {
                     "amount": {
                         "type": "integer",
+                        "exclusiveMinimum": 0.0,
                         "title": "Amount"
                     },
                     "currency": {
@@ -230,6 +231,7 @@
                 "properties": {
                     "amount": {
                         "type": "integer",
+                        "exclusiveMinimum": 0.0,
                         "title": "Amount"
                     },
                     "currency": {

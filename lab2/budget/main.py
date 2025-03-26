@@ -3,7 +3,7 @@ from typing import Annotated
 
 import aiohttp
 import redis.asyncio as redis
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt
 from dishka import FromComponent
 from fastapi import FastAPI, Header, HTTPException, status
 from dishka.integrations.fastapi import inject, setup_dishka
@@ -30,7 +30,7 @@ class User(BaseModel):
 
 
 class BudgetData(BaseModel):
-    amount: int
+    amount: PositiveInt
     currency: Currency
 
 
