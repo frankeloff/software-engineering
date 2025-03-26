@@ -69,10 +69,14 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str):
+def get_user(db, username: str) -> UserInDB | None:
     if username in db:
         user_dict = db[username]
         return UserInDB(**user_dict)
+
+
+def get_users_from_db(db) -> list[User]:
+    return [User(**user_dict) for user_dict in db.values()]
 
 
 def add_user_to_db(db: dict[str, dict[str, str | bool]], user: UserInDB) -> None:
@@ -168,7 +172,7 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@app.get("/users/me/", response_model=User)
+@app.get("/users/me", response_model=User)
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ) -> User:
@@ -206,6 +210,21 @@ async def create_user(
     )
 
     return User(**user.model_dump())
+
+
+@app.get("/users")
+async def get_users(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+) -> list[User]:
+    """
+    Ручка для получения всех пользователей
+
+    Всех польхователей может получать только админ
+    """
+    if current_user.is_admin == False:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+
+    return get_users_from_db(fake_users_db)
 
 
 @app.delete("/users/{username:str}")

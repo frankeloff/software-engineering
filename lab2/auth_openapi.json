@@ -44,11 +44,11 @@
                 }
             }
         },
-        "/users/me/": {
+        "/users/me": {
             "get": {
                 "summary": "Read Users Me",
                 "description": "Ручка для получения текущего пользователя",
-                "operationId": "read_users_me_users_me__get",
+                "operationId": "read_users_me_users_me_get",
                 "responses": {
                     "200": {
                         "description": "Successful Response",
@@ -69,6 +69,32 @@
             }
         },
         "/users": {
+            "get": {
+                "summary": "Get Users",
+                "description": "Ручка для получения всех пользователей\n\nВсех польхователей может получать только админ",
+                "operationId": "get_users_users_get",
+                "responses": {
+                    "200": {
+                        "description": "Successful Response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    },
+                                    "type": "array",
+                                    "title": "Response Get Users Users Get"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "OAuth2PasswordBearer": []
+                    }
+                ]
+            },
             "post": {
                 "summary": "Create User",
                 "description": "Ручка для создания пользователя\n\nПользователей может создавать только админ",

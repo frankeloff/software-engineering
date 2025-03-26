@@ -10,9 +10,6 @@ from dishka.integrations.fastapi import inject, setup_dishka
 
 import ioc
 
-AUTH_SERVICE_NAME = "auth"
-GET_USER_URL = f"http://{AUTH_SERVICE_NAME}:8081/users/me/"
-
 
 class TokenType(StrEnum):
     BEARER = "Bearer"
