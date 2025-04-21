@@ -1,0 +1,17 @@
+[project]
+name = "lab2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.115.12",
+    "passlib[bcrypt]>=1.7.4",
+    "pyjwt>=2.10.1",
+    "uvicorn>=0.34.0",
+    "pydantic-settings>=2.8.1",
+    "redis>=5.2.1",
+    "dishka>=1.5.0",
+    "sqlalchemy>=2.0.40",
+    "psycopg2-binary>=2.9.10",
+]
