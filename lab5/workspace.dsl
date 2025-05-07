@@ -43,7 +43,7 @@ workspace {
 
 
             redis = container "Redis" {
-                description "Хранит сессии пользователей"
+                description "Хранит сессии пользователей и кэш"
                 technology "Redis"
                 tags "cache"
             }
@@ -56,7 +56,7 @@ workspace {
 
             user -> user_service "Регистрация и вход"
             user_service -> database "Сохранение и получение данных"
-            user_service -> redis "Сохранение сессии (JWT)"
+            user_service -> redis "Сохранение сессии (JWT)/Получение кэша"
 
             user -> budget_service "Управление бюджетом"
             budget_service -> redis "Получение сессии"
@@ -94,6 +94,7 @@ workspace {
             autoLayout
             user -> budgeting_system.user_service "Создание пользователя (POST /user)"
             budgeting_system.user_service -> budgeting_system.database "Сохранение данных о пользователе"
+            budgeting_system.user_service -> budgeting_system.redis "Кэширование пользователя"
             budgeting_system.user_service -> user "Возвращает подтверждение регистрации"
         }
 
