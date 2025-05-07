@@ -272,9 +272,6 @@ async def get_users(
 
     db_users = con.query(UserModel).all()
 
-    for user in db_users:
-        await set_user_to_cache(redis_con, user)
-
     users = [
         User(username=str(user.username), is_admin=bool(user.is_admin))
         for user in db_users
